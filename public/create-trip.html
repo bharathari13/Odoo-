@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Trip - GlobeTrotter</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="dashboard.html" class="nav-logo"><i class="fas fa-globe-americas"></i> GlobeTrotter</a>
+            <a href="dashboard.html" class="btn btn-outline">Back to Dashboard</a>
+        </div>
+    </nav>
+
+    <main class="container mt-4">
+        <div class="auth-container" style="max-width: 600px;">
+            <div class="card">
+                <h2 class="mb-4">Create New Trip</h2>
+                <form id="create-trip-form">
+                    <label for="name">Trip Name</label>
+                    <input type="text" id="name" class="bg-input" placeholder="e.g. Summer in Italy" required>
+
+                    <div class="flex gap-4">
+                        <div style="flex: 1;">
+                            <label for="startDate">Start Date</label>
+                            <input type="date" id="startDate" class="bg-input" required>
+                        </div>
+                        <div style="flex: 1;">
+                            <label for="endDate">End Date</label>
+                            <input type="date" id="endDate" class="bg-input" required>
+                        </div>
+                    </div>
+
+                    <label for="description">Description</label>
+                    <textarea id="description" class="bg-input" rows="3"
+                        placeholder="Brief details about the trip..."></textarea>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Start Planning</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script>
+        document.getElementById('create-trip-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const description = document.getElementById('description').value;
+
+            try {
+                const res = await API.request('/trips', 'POST', { name, startDate, endDate, description });
+                if (res.id) {
+                    window.location.href = `trip.html?id=${res.id}`;
+                } else {
+                    alert('Failed to create trip');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error creating trip: ' + err.message);
+            }
+        });
+    </script>
+</body>
+
+</html>

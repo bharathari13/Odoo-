@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - GlobeTrotter</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="dashboard.html" class="nav-logo"><i class="fas fa-globe-americas"></i> GlobeTrotter</a>
+            <div class="flex items-center gap-4">
+                <span>Hello, <b id="user-name">User</b></span>
+                <button id="logout-btn" class="btn btn-outline">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-4">
+        <div class="flex justify-between items-center mb-4">
+            <h2>Your Trips</h2>
+            <a href="create-trip.html" class="btn btn-primary">+ Plan New Trip</a>
+        </div>
+
+        <div id="trip-list" class="trip-grid">
+            <!-- Trips will be loaded here -->
+        </div>
+
+        <h2 class="mt-4 mb-4" style="margin-top: 3rem;">Recommended Destinations</h2>
+        <div id="recommended-list" class="trip-grid">
+            <!-- Recommendations loaded here -->
+        </div>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

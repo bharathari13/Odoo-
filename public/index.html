@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GlobeTrotter - Plan Your Journey</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a href="/" class="nav-logo"><i class="fas fa-globe-americas"></i> GlobeTrotter</a>
+            <div>
+                <a href="login.html" class="btn btn-outline" id="nav-login">Login</a>
+                <a href="signup.html" class="btn btn-primary" id="nav-signup">Sign Up</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="hero">
+            <h1>Your Next Adventure Starts Here</h1>
+            <p class="mb-4" style="color: var(--text-muted); font-size: 1.2rem;">
+                Plan, organize, and share your perfect trip itinerary in minutes.
+            </p>
+            <a href="signup.html" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1.1rem;">Start Planning Free</a>
+        </div>
+
+        <section class="mt-4">
+            <h2 class="mb-4">Popular Destinations</h2>
+            <div class="trip-grid" id="featured-destinations">
+                <!-- Mock Data loaded via JS potentially -->
+                <div class="card trip-card">
+                    <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=600&q=80" alt="Paris" style="width:100%; height: 200px; object-fit: cover; border-radius: 4px;">
+                    <h3 class="mt-4">Paris, France</h3>
+                    <p class="text-muted">7 Days • Est. $1,500</p>
+                </div>
+                <div class="card trip-card">
+                    <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=600&q=80" alt="Tokyo" style="width:100%; height: 200px; object-fit: cover; border-radius: 4px;">
+                    <h3 class="mt-4">Tokyo, Japan</h3>
+                    <p class="text-muted">10 Days • Est. $2,200</p>
+                </div>
+                <div class="card trip-card">
+                    <img src="https://images.unsplash.com/photo-1520106212299-d99c443e4568?auto=format&fit=crop&w=600&q=80" alt="New York" style="width:100%; height: 200px; object-fit: cover; border-radius: 4px;">
+                    <h3 class="mt-4">New York, USA</h3>
+                    <p class="text-muted">5 Days • Est. $1,800</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/api.js"></script>
+    <script>
+        // Check if user is logged in
+        const user = localStorage.getItem('user');
+        if (user) {
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+</body>
+</html>
