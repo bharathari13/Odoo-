@@ -63,6 +63,9 @@ async function loadTrips() {
                 <p class="mt-2" style="font-size: 0.9rem;">${trip.description || 'No description'}</p>
                 <div class="mt-4 flex justify-between items-center">
                     <span class="btn btn-outline" style="font-size: 0.8rem;">View Itinerary</span>
+                    <button class="btn btn-outline" style="color: red; border-color: red; font-size: 0.8rem;" onclick="event.stopPropagation(); deleteTrip(${trip.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
                 </div>
             `;
             tripList.appendChild(card);
@@ -107,3 +110,16 @@ async function loadRecommendations() {
         recList.innerHTML = '<p>Could not load recommendations.</p>';
     }
 }
+async function deleteTrip(id) {
+    if (!confirm('Are you sure you want to delete this trip and all its stops?')) return;
+
+    try {
+        await API.request(`/trips/${id}`, 'DELETE');
+        loadTrips();
+    } catch (err) {
+        console.error(err);
+        alert('Failed to delete trip: ' + err.message);
+    }
+}
+
+window.deleteTrip = deleteTrip;

@@ -60,7 +60,10 @@ function renderStops() {
             activitiesHtml = stop.stopActivities.map(sa => `
                 <div class="flex justify-between items-center" style="font-size: 0.9rem; border-bottom: 1px solid #eee; padding: 4px 0;">
                     <span>${sa.activity.name} ($${sa.activity.cost})</span>
-                    <button onclick="removeActivity(${sa.id})" style="color: red; background:none; border:none; cursor:pointer;" title="Remove">&times;</button>
+                    <div class="flex gap-2">
+                        <button onclick="editActivity(${sa.id}, '${sa.activity.name}', ${sa.activity.cost}, '${sa.activity.category}')" style="color: var(--primary); background:none; border:none; cursor:pointer;" title="Edit"><i class="fas fa-edit"></i></button>
+                        <button onclick="removeActivity(${sa.id})" style="color: red; background:none; border:none; cursor:pointer;" title="Remove">&times;</button>
+                    </div>
                 </div>
             `).join('');
         } else {
@@ -99,6 +102,10 @@ function renderStops() {
                 <div>
                     <h3>${stop.city.name}, ${stop.city.country}</h3>
                     <p class="text-muted">${new Date(stop.startDate).toLocaleDateString()} - ${new Date(stop.endDate).toLocaleDateString()} (${days} days)</p>
+                    <div class="flex gap-2 mt-1">
+                        <button onclick="openEditStopModal(${stop.id}, '${stop.startDate}', '${stop.endDate}')" class="btn btn-outline" style="padding: 0.1rem 0.5rem; font-size: 0.75rem;">Edit Dates</button>
+                        <button onclick="deleteStop(${stop.id})" class="btn btn-outline" style="padding: 0.1rem 0.5rem; font-size: 0.75rem; color: red; border-color: red;">Delete Stop</button>
+                    </div>
                 </div>
                 <div style="text-align: right;">
                     <p style="font-weight: bold;">$${totalStopCost}</p>
@@ -253,6 +260,60 @@ window.addActivity = async function (stopId) {
         alert('Unexpected validation error: ' + e.message);
     }
 };
+
+window.deleteStop = async function (stopId) {
+    if (!confirm('Are you sure you want to delete this stop?')) return;
+    try {
+        await API.request(`/stops/${stopId}`, 'DELETE');
+        loadTrip();
+    } catch (e) {
+        console.error(e);
+        alert('Failed to delete stop');
+    }
+};
+
+window.openEditStopModal = function (stopId, currentStart, currentEnd) {
+    const startStr = new Date(currentStart).toISOString().split('T')[0];
+    const endStr = new Date(currentEnd).toISOString().split('T')[0];
+
+    const newStart = prompt("Enter new start date (YYYY-MM-DD):", startStr);
+    if (!newStart) return;
+    const newEnd = prompt("Enter new end date (YYYY-MM-DD):", endStr);
+    if (!newEnd) return;
+
+    updateStop(stopId, newStart, newEnd);
+};
+
+async function updateStop(stopId, startDate, endDate) {
+    try {
+        await API.request(`/stops/${stopId}`, 'PUT', { startDate, endDate });
+        loadTrip();
+    } catch (e) {
+        console.error(e);
+        alert('Failed to update stop dates');
+    }
+}
+
+window.editActivity = function (saId, name, cost, category) {
+    const newName = prompt("Enter activity name:", name);
+    if (!newName) return;
+    const newCost = prompt("Enter activity cost:", cost);
+    if (newCost === null) return;
+    const newCategory = prompt("Enter activity category:", category);
+    if (!newCategory) return;
+
+    updateActivity(saId, newName, newCost, newCategory);
+};
+
+async function updateActivity(saId, name, cost, category) {
+    try {
+        await API.request(`/stop-activities/${saId}`, 'PUT', { name, cost, category });
+        loadTrip();
+    } catch (e) {
+        console.error(e);
+        alert('Failed to update activity');
+    }
+}
 
 window.removeActivity = async function (stopActivityId) {
     if (!confirm('Remove this activity?')) return;

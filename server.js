@@ -153,6 +153,42 @@ app.post('/api/trips', authenticateToken, async (req, res) => {
     }
 });
 
+// Update trip
+app.put('/api/trips/:id', authenticateToken, async (req, res) => {
+    const { name, startDate, endDate, description } = req.body;
+    try {
+        const trip = await prisma.trip.update({
+            where: { id: parseInt(req.params.id) },
+            data: {
+                name,
+                startDate: new Date(startDate),
+                endDate: new Date(endDate),
+                description
+            }
+        });
+        res.json(trip);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to update trip' });
+    }
+});
+
+// Delete trip
+app.delete('/api/trips/:id', authenticateToken, async (req, res) => {
+    try {
+        const tripId = parseInt(req.params.id);
+        const trip = await prisma.trip.findUnique({ where: { id: tripId } });
+        if (!trip || trip.userId !== req.user.userId) return res.status(404).json({ error: 'Trip not found' });
+
+        await prisma.trip.delete({ where: { id: tripId } });
+        res.json({ success: true });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to delete trip' });
+    }
+});
+
+
 // Get single trip details
 app.get('/api/trips/:id', authenticateToken, async (req, res) => {
     const trip = await prisma.trip.findUnique({
@@ -299,6 +335,38 @@ app.post('/api/trips/:id/stops', authenticateToken, async (req, res) => {
     }
 });
 
+// Update stop
+app.put('/api/stops/:id', authenticateToken, async (req, res) => {
+    const { startDate, endDate } = req.body;
+    try {
+        const stop = await prisma.stop.update({
+            where: { id: parseInt(req.params.id) },
+            data: {
+                startDate: new Date(startDate),
+                endDate: new Date(endDate)
+            }
+        });
+        res.json(stop);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to update stop' });
+    }
+});
+
+// Delete stop
+app.delete('/api/stops/:id', authenticateToken, async (req, res) => {
+    try {
+        await prisma.stop.delete({
+            where: { id: parseInt(req.params.id) }
+        });
+        res.json({ success: true });
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to delete stop' });
+    }
+});
+
+
 // Add activity to stop
 app.post('/api/stops/:stopId/activities', authenticateToken, async (req, res) => {
     const { activityId } = req.body;
@@ -327,6 +395,34 @@ app.delete('/api/stop-activities/:id', authenticateToken, async (req, res) => {
         res.status(500).json({ error: 'Failed to remove activity' });
     }
 });
+
+// Update activity
+app.put('/api/stop-activities/:id', authenticateToken, async (req, res) => {
+    const { name, cost, category } = req.body;
+    try {
+        const stopActivity = await prisma.stopActivity.findUnique({
+            where: { id: parseInt(req.params.id) },
+            include: { activity: true }
+        });
+
+        if (!stopActivity) return res.status(404).json({ error: 'Activity not found' });
+
+        const updatedActivity = await prisma.activity.update({
+            where: { id: stopActivity.activityId },
+            data: {
+                name,
+                cost: parseFloat(cost),
+                category
+            }
+        });
+
+        res.json(updatedActivity);
+    } catch (e) {
+        console.error(e);
+        res.status(500).json({ error: 'Failed to update activity' });
+    }
+});
+
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
